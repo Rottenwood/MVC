@@ -35,7 +35,6 @@ class Route {
         $actionName = $actionName . 'Action';
 
         // Загрузка файла с классом модели (файла модели может и не быть)
-//        $modelFile = strtolower($modelName) . '.php';
         $modelFile = $modelName . '.php';
         $modelPath = "src/Model/" . $modelFile;
         if (file_exists($modelPath)) {
@@ -43,7 +42,6 @@ class Route {
         }
 
         // Загрузка файла с классом контроллера
-//        $controllerFile = strtolower($controllerName) . '.php';
         $controllerFile = $controllerName . '.php';
         $controllerPath = "src/Controller/" . $controllerFile;
         if (file_exists($controllerPath)) {
@@ -72,6 +70,15 @@ class Route {
 
         header('HTTP/1.1 404 Not Found');
         header("Status: 404 Not Found");
-        header('Location:' . $host . '404');
+        header('Location:' . $host . 'aurora/error/pagenotfound');
+    }
+
+    /**
+     * Статический метод для редиректа
+     * @param $direction
+     */
+    static function redirect($direction) {
+        $host = 'http://' . $_SERVER['HTTP_HOST'] . '/';
+        header('Location:' . $host . $direction);
     }
 }
