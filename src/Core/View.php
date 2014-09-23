@@ -2,6 +2,7 @@
 namespace PetrAurora\View;
 
 use PetrAurora\Controller;
+use PetrAurora\loginService;
 
 /**
  * @author: Rottenwood
@@ -14,16 +15,21 @@ use PetrAurora\Controller;
  */
 class View {
 
-    private $pagesBehindFirewall = array(
+    public $pagesBehindFirewall = array(
         '/aurora/error/pagenotfound',
     );
 
     function generate($contentView, $data = null, $templateView = 'layout.html.php') {
+
         // Фаерволл
-        if (!in_array($_SERVER['REDIRECT_URL'], $this->pagesBehindFirewall)) {
-            $loginService = new \loginService();
+        if (array_key_exists('REDIRECT_URL', $_SERVER) && !in_array($_SERVER['REDIRECT_URL'], $this->pagesBehindFirewall)) {
+            $loginService = new loginService();
 
             //parameters are(SESSION, name of the table, name of the password field, name of the username field)
+//            if (!is_null($_SESSION)) {
+            //            	return;
+            //            }
+
             if ($loginService->logincheck($_SESSION['loggedin'], "users", "password", "useremail") == false) {
                 //do something if NOT logged in. For example, redirect to login page or display message.
                 $loginService->loginform("loginformname", "loginformid", "src/Service/LoginService/form_action.php");

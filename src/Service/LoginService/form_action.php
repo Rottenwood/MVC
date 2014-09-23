@@ -8,7 +8,7 @@ namespace PetrAurora;
 
 require_once("../../Core/Route.php");
 include("../../Core/loginService.php");
-$loginService = new \loginService();
+$loginService = new loginService();
 
 if ($_REQUEST['action'] == "login") {
     if ($loginService->login("users", $_REQUEST['username'], $_REQUEST['password']) == true) {

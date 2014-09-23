@@ -1,52 +1,46 @@
 <?php
-//For security reasons, don't display any errors or warnings. Comment out in DEV.
-error_reporting(0);
-//start session
-session_start();
+namespace PetrAurora;
 
 class loginService {
+    // Реквизиты доступа к БД
+    public $hostname_logon = 'localhost';
+    public $database_logon = 'aurora';
+    public $username_logon = 'petr';
+    public $password_logon = 'inelep';
 
-    //database setup
-    var $hostname_logon = 'localhost';      //Database server LOCATION
-    var $database_logon = 'aurora';       //Database NAME
-    var $username_logon = 'petr';       //Database USERNAME
-    var $password_logon = 'inelep';       //Database PASSWORD
+    // Поля в БД
+    public $user_table = 'users';          //Users table name
+    public $user_column = 'useremail';     //USERNAME column (value MUST be valid email)
+    public $pass_column = 'password';      //PASSWORD column
 
-    //table fields
-    var $user_table = 'users';          //Users table name
-    var $user_column = 'useremail';     //USERNAME column (value MUST be valid email)
-    var $pass_column = 'password';      //PASSWORD column
-    //    var $user_level = 'userlevel';      //(optional) userlevel column
+    // MD5-хеширование пароля
+    public $encrypt = true;
 
-    //encryption
-    var $encrypt = true;       //set to true to use md5 encryption for the password
-
-    //connect to database
-    function dbconnect() {
+    // Соединение с БД
+    public function dbconnect() {
         $connections = mysql_connect($this->hostname_logon, $this->username_logon, $this->password_logon) or die ('Unabale to connect to the database');
         mysql_select_db($this->database_logon) or die ('Unable to select database!');
         return;
     }
 
-    //login function
-    function login($table, $username, $password) {
-        //conect to DB
+    // Логин
+    public function login($table, $username, $password) {
         $this->dbconnect();
-        //make sure table name is set
+
         if ($this->user_table == "") {
             $this->user_table = $table;
         }
-        //check if encryption is used
+
         if ($this->encrypt == true) {
             $password = md5($password);
         }
-        //execute login via qry function that prevents MySQL injections
+
+        // Запрос на получение юзера через функцию защиты от SQL-инъекций
         $result = $this->qry("SELECT * FROM " . $this->user_table . " WHERE " . $this->user_column . "='?' AND " . $this->pass_column . " = '?';", $username, $password);
         $row = mysql_fetch_assoc($result);
-        if ($row != "Error") {
+        if ($result != "Error") {
             if ($row[$this->user_column] != "" && $row[$this->pass_column] != "") {
-                //register sessions
-                //you can add additional sessions here if needed
+                // Открытие сессии после авторизации
                 $_SESSION['loggedin'] = $row[$this->pass_column];
                 return true;
             } else {
@@ -59,8 +53,8 @@ class loginService {
 
     }
 
-    //prevent injection
-    function qry($query) {
+    // Функция защиты от SQL-инъекций
+    public function qry($query) {
         $this->dbconnect();
         $args = func_get_args();
         $query = array_shift($args);
@@ -72,22 +66,21 @@ class loginService {
         if ($result) {
             return $result;
         } else {
-            $error = "Error";
+            $result = 'Error';
             return $result;
         }
     }
 
-    //logout function
-    function logout() {
+    // Логаут
+    public function logout() {
         session_destroy();
         return;
     }
 
-    //check if loggedin
-    function logincheck($logincode, $user_table, $pass_column, $user_column) {
-        //conect to DB
+    // Проверка состояния логина в системе
+    public function logincheck($logincode, $user_table, $pass_column, $user_column) {
         $this->dbconnect();
-        //make sure password column and table are set
+
         if ($this->pass_column == "") {
             $this->pass_column = $pass_column;
         }
@@ -97,27 +90,27 @@ class loginService {
         if ($this->user_table == "") {
             $this->user_table = $user_table;
         }
-        //exectue query
+
         $result = $this->qry("SELECT * FROM " . $this->user_table . " WHERE " . $this->pass_column . " = '?';", $logincode);
         $rownum = mysql_num_rows($result);
-        //return true if logged in and false if not
+
+        // Возвращаю true, если пользователь залогинен и false - если нет
         if ($result != "Error") {
             if ($rownum > 0) {
                 return true;
             } else {
                 return false;
             }
+        } else {
+            return false;
         }
     }
 
-    //reset password
-    function passwordreset($username, $user_table, $pass_column, $user_column) {
-        //conect to DB
+    // Сброс пароля
+    public function passwordreset($username, $user_table, $pass_column, $user_column) {
         $this->dbconnect();
-        //generate new password
         $newpassword = $this->createPassword();
 
-        //make sure password column and table are set
         if ($this->pass_column == "") {
             $this->pass_column = $pass_column;
         }
@@ -127,28 +120,28 @@ class loginService {
         if ($this->user_table == "") {
             $this->user_table = $user_table;
         }
-        //check if encryption is used
+
         if ($this->encrypt == true) {
             $newpassword_db = md5($newpassword);
         } else {
             $newpassword_db = $newpassword;
         }
 
-        //update database with new password
+        // Запись нового пароля в БД
         $qry = "UPDATE " . $this->user_table . " SET " . $this->pass_column . "='" . $newpassword_db . "' WHERE " . $this->user_column . "='" . stripslashes($username) . "'";
         $result = mysql_query($qry) or die(mysql_error());
 
         $to = stripslashes($username);
-        //some injection protection
+        // Антиинъекции
         $illegals = array("%0A", "%0D", "%0a", "%0d", "bcc:", "Content-Type", "BCC:", "Bcc:", "Cc:", "CC:", "TO:", "To:", "cc:", "to:");
         $to = str_replace($illegals, "", $to);
         $getemail = explode("@", $to);
 
-        //send only if there is one email
+        // В случае если логин это e-mail, происходит отправка письма
         if (sizeof($getemail) > 2) {
             return false;
         } else {
-            //send email
+            // Компоновка письма
             $from = $_SERVER['SERVER_NAME'];
             $subject = "Password Reset: " . $_SERVER['SERVER_NAME'];
             $msg = "
@@ -157,12 +150,12 @@ Your new password is: " . $newpassword . "
  
 ";
 
-            //now we need to set mail headers
+            // Заголовки письма
             $headers = "MIME-Version: 1.0 rn";
             $headers .= "Content-Type: text/html; \r\n";
             $headers .= "From: $from  \r\n";
 
-            //now we are ready to send mail
+            // Отправка письма
             $sent = mail($to, $subject, $msg, $headers);
             if ($sent) {
                 return true;
@@ -172,8 +165,8 @@ Your new password is: " . $newpassword . "
         }
     }
 
-    //create random password with 8 alphanumerical characters
-    function createPassword() {
+    // Генерация пароля
+    public function createPassword() {
         $chars = "abcdefghijkmnopqrstuvwxyz023456789";
         srand((double)microtime() * 1000000);
         $i = 0;
@@ -187,9 +180,8 @@ Your new password is: " . $newpassword . "
         return $pass;
     }
 
-    //login form
-    function loginform($formname, $formclass, $formaction) {
-        //conect to DB
+    // Отрисовка формы логина
+    public function loginform($formname, $formclass, $formaction) {
         $this->dbconnect();
         echo '
 <form name="' . $formname . '" method="post" id="' . $formname . '" class="' . $formclass . '" enctype="application/x-www-form-urlencoded" action="' . $formaction . '">
@@ -205,9 +197,8 @@ Your new password is: " . $newpassword . "
 ';
     }
 
-    //reset password form
-    function resetform($formname, $formclass, $formaction) {
-        //conect to DB
+    // Отрисовка формы смены пароля
+    public function resetform($formname, $formclass, $formaction) {
         $this->dbconnect();
         echo '
 <form name="' . $formname . '" method="post" id="' . $formname . '" class="' . $formclass . '" enctype="application/x-www-form-urlencoded" action="' . $formaction . '">
@@ -221,9 +212,8 @@ Your new password is: " . $newpassword . "
 ';
     }
 
-    //function to install logon table
-    function cratetable($tablename) {
-        //conect to DB
+    // Техническая функция создания таблицы для юзеров
+    public function cratetable($tablename) {
         $this->dbconnect();
         $qry = "CREATE TABLE IF NOT EXISTS " . $tablename . " (
               userid int(11) NOT NULL auto_increment,
