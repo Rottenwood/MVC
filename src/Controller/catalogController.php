@@ -4,11 +4,13 @@ namespace PetrAurora\Controller;
 class catalogController extends Controller {
 
     public function indexAction() {
+        $data = array();
+
         $data['url'] = $this->url;
         $data['title'] = 'Каталог';
         $data['class']['catalog'] = 'active';
 
-        $this->view->generate('catalog.html.php', $data);
+        $this->view->render('catalog.html.php', $data);
     }
 
 }

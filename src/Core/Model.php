@@ -1,5 +1,7 @@
 <?php
 namespace PetrAurora\Model;
+use PetrAurora\MySqlService;
+use PetrAurora\Parameters;
 
 /**
  * Author: Rottenwood
@@ -7,7 +9,11 @@ namespace PetrAurora\Model;
  */
 class Model {
 
-    public function get_data() {
+    public $mySqlService;
+
+    public function __construct() {
+        $this->mySqlService = new MySqlService(); // TODO: Рефакторинг
+        $this->mysqli = new \mysqli(Parameters::$hostname, Parameters::$username, Parameters::$password, Parameters::$database);
     }
 
 }

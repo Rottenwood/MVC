@@ -6,7 +6,7 @@ use PetrAurora\Route;
 class logoutController extends Controller {
 
     public function indexAction() {
-        $this->loginService->logout();
+        session_destroy();
         Route::redirect('aurora');
     }
 

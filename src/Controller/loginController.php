@@ -4,9 +4,12 @@ namespace PetrAurora\Controller;
 class loginController extends Controller {
 
     public function indexAction() {
-        $data['title'] = 'Вход в систему';
+        $data = array();
 
-        $this->view->generate('login.html.php', $data);
+        $data['title'] = 'Вход в систему';
+        $data['noMenu'] = 1;
+
+        $this->view->render('login.html.php', $data);
     }
 
 }

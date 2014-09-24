@@ -13,9 +13,4 @@ class Parameters {
     static public $database = 'aurora';
     static public $username = 'petr';
     static public $password = 'inelep';
-
-    // Поля в БД
-    static public $userTable = 'users';
-    static public $userColumn = 'useremail';
-    static public $passwordColumn = 'password';
 }

@@ -4,11 +4,13 @@ namespace PetrAurora\Controller;
 class defaultController extends Controller {
 
     public function indexAction() {
+        $data = array();
+
         $data['url'] = $this->url;
         $data['title'] = 'Тестовое MVP приложение';
         $data['class']['main'] = 'active';
 
-        $this->view->generate('index.html.php', $data);
+        $this->view->render('index.html.php', $data);
     }
 
 }

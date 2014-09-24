@@ -2,16 +2,22 @@
 namespace PetrAurora;
 
 use PetrAurora\Controller;
-/**
- * Author: Rottenwood
- * Date Created: 22.09.14 18:46
- */
 
 /**
  * Маршрутизатор
  */
 class Route {
 
+    // Страницы, доступ на которые разрешен без авторизации
+    public static $pagesBehindFirewall = array(
+        '/aurora/login',
+        '/aurora/error/pagenotfound',
+    );
+
+    /**
+     * Маршрутизация приложения
+     * @return bool
+     */
     static function init() {
         // Контроллер и метод по умолчанию
         $controllerName = 'default';
@@ -24,10 +30,12 @@ class Route {
             $controllerName = $routes[2];
         }
 
-        // Получение имени метода
-        if (!empty($routes[3])) {
-            $actionName = $routes[3];
-        }
+//        // Получение имени метода
+//        if (!empty($routes[3])) {
+//            $actionName = $routes[3];
+//        }
+
+        $page = $routes[3];
 
         // Указание имен для классов
         $modelName = $controllerName . 'Model';
@@ -41,11 +49,28 @@ class Route {
             include "src/Model/" . $modelFile;
         }
 
+
         // Загрузка файла с классом контроллера
         $controllerFile = $controllerName . '.php';
         $controllerPath = "src/Controller/" . $controllerFile;
+
         if (file_exists($controllerPath)) {
-            include "src/Controller/" . $controllerFile;
+
+            // Фаерволл, доступ только после авторизации ко всем страницам,
+            // кроме перечисленных в Route::$pagesBehindFirewall
+            if (!in_array($_SERVER['REDIRECT_URL'], Route::$pagesBehindFirewall)) {
+                // Сервис работы с БД
+                $mySqlService = new MySqlService();
+
+                if ($mySqlService->checkToken($_SESSION['token'])) {
+                    include "src/Controller/" . $controllerFile;
+                } else {
+                    Route::redirect('aurora/login');
+                }
+            } else {
+                include "src/Controller/" . $controllerFile;
+            }
+
         } else {
             Route::ErrorPage404();
         }
@@ -57,28 +82,36 @@ class Route {
 
         if (method_exists($controller, $action)) {
             // Вызов метода контроллера
-            $controller->$action();
+            $controller->$action($page);
         } else {
             Route::ErrorPage404();
         }
 
+        return true;
     }
 
+    /**
+     * Статический метод перенаправления на страницу 404
+     * @return bool
+     */
     static function ErrorPage404() {
         $host = 'http://' . $_SERVER['HTTP_HOST'] . '/';
-//        $requestUri = $_SERVER['REQUEST_URI'];
-
         header('HTTP/1.1 404 Not Found');
         header("Status: 404 Not Found");
         header('Location:' . $host . 'aurora/error/pagenotfound');
+
+        return true;
     }
 
     /**
      * Статический метод для редиректа
      * @param $direction
+     * @return bool
      */
     static function redirect($direction) {
         $host = 'http://' . $_SERVER['HTTP_HOST'] . '/';
         header('Location:' . $host . $direction);
+
+        return true;
     }
 }

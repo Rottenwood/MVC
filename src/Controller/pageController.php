@@ -1,6 +1,7 @@
 <?php
 namespace PetrAurora\Controller;
 
+use PetrAurora\Route;
 use PetrAurora\View;
 use PetrAurora\Model;
 
@@ -16,14 +17,31 @@ class pageController extends Controller {
         $this->url = 'http://' . $_SERVER['HTTP_HOST'] . '/' . $this->url[1];
     }
 
-    public function indexAction() {
+    public function indexAction($page = null) {
+        $data = array();
+
         $data['url'] = $this->url;
         $data['title'] = 'Страницы';
         $data['class']['page'] = 'active';
 
-        $data['pages'] = $this->model->getAllPages();
+        if ($page) {
+            // Если название страницы указано
+            $pageArray = $this->model->getPageByAlias($page);
 
-        $this->view->generate('page.html.php', $data);
+            if ($pageArray) {
+                $data['title'] = $pageArray['title'];
+                $data['id'] = $pageArray['id'];
+                $data['pic'] = $pageArray['pic'];
+                $data['content'] = $pageArray['content'];
+                $this->view->render('singlePage.html.php', $data);
+            } else {
+                // Если страница не найдена
+                Route::ErrorPage404();
+            }
+        } else {
+            // Если страница не указана
+            $data['pages'] = $this->model->getAllPages();
+            $this->view->render('pages.html.php', $data);
+        }
     }
-
 }

@@ -1,0 +1,58 @@
+p {
+    font-size: 18px;
+}
+
+/* Меню навигации */
+div#navigation span {
+    font-weight: 800;
+    padding-right: 10px;
+}
+
+/* Ссылка в меню навигации*/
+div#navigation a {
+    color: #075e12;
+}
+
+/* Отметка текущего пункта в меню навигации */
+div#navigation a.active{
+    color: #c00600;
+    font-weight: 800;
+}
+
+/* Отображение статьи */
+div.article {
+    font-size: 20px;
+    margin: 50px;
+}
+
+/* Картинка в статье */
+div.article img {
+    float:left;
+    margin: 0px 20px 20px 0;
+}
+
+/* Страница редактирования */
+div.edit {
+    margin: 10px;
+}
+
+div.edit table td {
+    padding: 10px;
+    width: 50%;
+    text-align: center;
+}
+
+div.edit table td.text {
+    text-align: inherit;
+}
+
+div.edit textarea {
+    width: 600px;
+    height: 300px;
+}
+
+/* Кнопки */
+
+button, .button {
+    font-size: 18px;
+}

@@ -18,8 +18,8 @@ class loginService {
 
     // Соединение с БД
     public function dbconnect() {
-        $connections = mysql_connect($this->hostname_logon, $this->username_logon, $this->password_logon) or die ('Unabale to connect to the database');
-        mysql_select_db($this->database_logon) or die ('Unable to select database!');
+        $connections = ($GLOBALS["___mysqli_ston"] = mysqli_connect($this->hostname_logon,  $this->username_logon,  $this->password_logon)) or die ('Unabale to connect to the database');
+        ((bool)mysqli_query($GLOBALS["___mysqli_ston"], "USE $this->database_logon")) or die ('Unable to select database!');
         return;
     }
 
@@ -37,7 +37,7 @@ class loginService {
 
         // Запрос на получение юзера через функцию защиты от SQL-инъекций
         $result = $this->qry("SELECT * FROM " . $this->user_table . " WHERE " . $this->user_column . "='?' AND " . $this->pass_column . " = '?';", $username, $password);
-        $row = mysql_fetch_assoc($result);
+        $row = mysqli_fetch_assoc($result);
         if ($result != "Error") {
             if ($row[$this->user_column] != "" && $row[$this->pass_column] != "") {
                 // Открытие сессии после авторизации
@@ -55,14 +55,14 @@ class loginService {
 
     // Функция защиты от SQL-инъекций
     public function qry($query) {
-        $this->dbconnect();
+        $con = $this->dbconnect();
         $args = func_get_args();
         $query = array_shift($args);
         $query = str_replace("?", "%s", $query);
-        $args = array_map('mysql_real_escape_string', $args);
+        $args = array_map('mysqli_real_escape_string', $args);
         array_unshift($args, $query);
         $query = call_user_func_array('sprintf', $args);
-        $result = mysql_query($query) or die(mysql_error());
+        $result = mysqli_query($GLOBALS["___mysqli_ston"], $query) or die(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
         if ($result) {
             return $result;
         } else {
@@ -92,7 +92,7 @@ class loginService {
         }
 
         $result = $this->qry("SELECT * FROM " . $this->user_table . " WHERE " . $this->pass_column . " = '?';", $logincode);
-        $rownum = mysql_num_rows($result);
+        $rownum = mysqli_num_rows($result);
 
         // Возвращаю true, если пользователь залогинен и false - если нет
         if ($result != "Error") {
@@ -129,7 +129,7 @@ class loginService {
 
         // Запись нового пароля в БД
         $qry = "UPDATE " . $this->user_table . " SET " . $this->pass_column . "='" . $newpassword_db . "' WHERE " . $this->user_column . "='" . stripslashes($username) . "'";
-        $result = mysql_query($qry) or die(mysql_error());
+        $result = mysqli_query($GLOBALS["___mysqli_ston"], $qry) or die(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
 
         $to = stripslashes($username);
         // Антиинъекции
@@ -221,7 +221,7 @@ Your new password is: " . $newpassword . "
               password varchar(50) NOT NULL default '',
               PRIMARY KEY  (userid)
             )";
-        $result = mysql_query($qry) or die(mysql_error());
+        $result = mysqli_query($GLOBALS["___mysqli_ston"], $qry) or die(((is_object($GLOBALS["___mysqli_ston"])) ? mysqli_error($GLOBALS["___mysqli_ston"]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : false)));
         return;
     }
 }

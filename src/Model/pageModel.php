@@ -1,19 +1,16 @@
 <?php
 namespace PetrAurora\Model;
 
-/**
- * Author: Rottenwood
- * Date Created: 23.09.14 17:09
- */
-
 class pageModel extends Model {
 
     public function getAllPages() {
-        $result = array();
+        $result = $this->mySqlService->getPages();
 
-        $result[] = 'test';
-        $result[] = 'test2';
-        $result[] = 'test3';
+        return $result;
+    }
+
+    public function getPageByAlias($alias) {
+        $result = $this->mySqlService->getPageByAlias($alias);
 
         return $result;
     }
