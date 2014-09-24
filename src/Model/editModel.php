@@ -1,12 +1,21 @@
 <?php
 namespace PetrAurora\Model;
 
+/**
+ * Модель для редактирования страниц
+ * @package PetrAurora\Model
+ */
 class editModel extends Model {
 
+    /**
+     * Запрос страницы по идентификатору
+     * @param $id
+     * @return array
+     */
     public function getPageById($id) {
         $page = array();
 
-        if ($stmt = $this->mysqli->prepare("SELECT p.title, p.content, p.alias, i.pic FROM pages p LEFT JOIN pics i ON p.pic_id = i.id WHERE p.id = ?")) {
+        if ($stmt = $this->mysqli->prepare("SELECT p.title, p.content, p.alias, p.pic FROM pages p WHERE p.id = ?")) {
 
             $stmt->bind_param('d', $id);
             $stmt->execute();
@@ -18,7 +27,7 @@ class editModel extends Model {
                 $page['title'] = $title;
                 $page['alias'] = $alias;
                 $page['content'] = $content;
-                $page['pic'] = 'data:image/jpeg;base64,' . base64_encode($pic);
+                $page['pic'] = $pic;
             }
 
             $stmt->close();

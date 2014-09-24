@@ -5,6 +5,10 @@ use PetrAurora\Route;
 use PetrAurora\View;
 use PetrAurora\Model;
 
+/**
+ * Контроллер для редактирования страниц
+ * @package PetrAurora\Controller
+ */
 class editController extends Controller {
 
     public $model;
@@ -20,14 +24,14 @@ class editController extends Controller {
     public function indexAction($id) {
         $data = array(
             'url' => $this->url,
-            'htmlHead' => '<script type="text/javascript" src="http://js.nicedit.com/nicEdit-latest.js"></script> <script type="text/javascript">bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });</script>'
+            'htmlHead' => '<script type="text/javascript" src="http://js.nicedit.com/nicEdit-latest.js"></script> <script type="text/javascript">bkLib.onDomLoaded(function() { nicEditors.allTextAreas() });</script>',
         );
 
         $result = $this->model->getPageById($id);
 
-
         if ($result) {
             $data = array_merge($data, $result);
+            $data['pageTitle'] = $data['title'];
             $data['title'] = 'Редактирование страницы';
         } else {
             Route::ErrorPage404();
@@ -35,5 +39,4 @@ class editController extends Controller {
 
         $this->view->render('edit.html.php', $data);
     }
-
 }

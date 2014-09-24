@@ -1,9 +1,12 @@
 <?php
 namespace PetrAurora\Controller;
 
-use PetrAurora\loginService;
 use PetrAurora\View;
 
+/**
+ * Родительский контроллер
+ * @package PetrAurora\Controller
+ */
 class Controller {
 
     public $model;

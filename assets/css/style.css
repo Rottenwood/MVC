@@ -23,32 +23,41 @@ div#navigation a.active{
 div.article {
     font-size: 20px;
     margin: 50px;
+    padding: 10px;
 }
 
 /* Картинка в статье */
 div.article img {
     float:left;
-    margin: 0px 20px 20px 0;
+    margin: 0 20px 20px 0;
 }
 
 /* Страница редактирования */
-div.edit {
+div.edit, div.edit {
     margin: 10px;
 }
 
-div.edit table td {
+div.edit table td, div.create table td {
     padding: 10px;
     width: 50%;
     text-align: center;
 }
 
-div.edit table td.text {
+div.edit table td.text, div.create table td.text {
     text-align: inherit;
 }
 
-div.edit textarea {
-    width: 600px;
+div.edit textarea, div.create textarea {
+    width: 605px;
     height: 300px;
+}
+
+input.titleform {
+    font-size: 24px;
+    width: 600px;
+    height: 50px;
+    margin-bottom: 10px;
+    padding-left: 5px;
 }
 
 /* Кнопки */

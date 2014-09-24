@@ -1,6 +1,10 @@
 <?php
 namespace PetrAurora\Controller;
 
+/**
+ * Каталог
+ * @package PetrAurora\Controller
+ */
 class catalogController extends Controller {
 
     public function indexAction() {

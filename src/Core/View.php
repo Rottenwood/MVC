@@ -2,8 +2,6 @@
 namespace PetrAurora\View;
 
 use PetrAurora\Controller;
-use PetrAurora\MySqlService;
-use PetrAurora\Route;
 
 /**
  * @author: Rottenwood

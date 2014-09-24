@@ -1,6 +1,10 @@
 <?php
 namespace PetrAurora\Controller;
 
+/**
+ * Главная страница
+ * @package PetrAurora\Controller
+ */
 class defaultController extends Controller {
 
     public function indexAction() {

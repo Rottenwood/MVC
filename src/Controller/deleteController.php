@@ -1,10 +1,13 @@
 <?php
 namespace PetrAurora\Controller;
 
-use PetrAurora\Route;
 use PetrAurora\View;
 use PetrAurora\Model;
 
+/**
+ * Удаление страниц
+ * @package PetrAurora\Controller
+ */
 class deleteController extends Controller {
 
     public $model;
@@ -19,17 +22,12 @@ class deleteController extends Controller {
 
     public function indexAction($id) {
         $data = array(
-            'url' => $this->url,
+            'url'    => $this->url,
             'noMenu' => 1,
         );
 
-        $result = $this->model->deletePage($id);
-
-        if ($result) {
-            $data['message'] = "Страница с идентификатором $id была удалена.";
-        } else {
-            Route::ErrorPage404();
-        }
+        $this->model->deletePage($id);
+        $data['message'] = "Страница с идентификатором $id была удалена.";
 
         $this->view->render('resultPage.html.php', $data);
     }

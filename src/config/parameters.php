@@ -13,4 +13,7 @@ class Parameters {
     static public $database = 'aurora';
     static public $username = 'petr';
     static public $password = 'inelep';
+
+    // Директория для загруженных изображений
+    static public $uploadDir = '/var/www/aurora/upload/';
 }

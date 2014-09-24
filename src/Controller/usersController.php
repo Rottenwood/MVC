@@ -4,6 +4,10 @@ namespace PetrAurora\Controller;
 use PetrAurora\Model\usersModel;
 use PetrAurora\View\View;
 
+/**
+ * Страница пользователей
+ * @package PetrAurora\Controller
+ */
 class usersController extends Controller {
 
     public function __construct() {

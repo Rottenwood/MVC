@@ -30,11 +30,7 @@ class Route {
             $controllerName = $routes[2];
         }
 
-//        // Получение имени метода
-//        if (!empty($routes[3])) {
-//            $actionName = $routes[3];
-//        }
-
+        // Получение имени страницы
         $page = $routes[3];
 
         // Указание имен для классов

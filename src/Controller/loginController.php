@@ -1,6 +1,10 @@
 <?php
 namespace PetrAurora\Controller;
 
+/**
+ * Логин
+ * @package PetrAurora\Controller
+ */
 class loginController extends Controller {
 
     public function indexAction() {

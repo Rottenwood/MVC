@@ -5,6 +5,10 @@ use PetrAurora\Route;
 use PetrAurora\View;
 use PetrAurora\Model;
 
+/**
+ * Страницы
+ * @package PetrAurora\Controller
+ */
 class pageController extends Controller {
 
     public $model;
