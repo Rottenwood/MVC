@@ -4,7 +4,8 @@
 <div class="edit">
     <table>
         <tr>
-            <form enctype="multipart/form-data" action="__URL__" method="POST">
+            <form enctype="multipart/form-data" action="<?php echo $data['url'] ?>/src/Service/pageEditFormReceiver.php"
+                  method="POST">
                 <td><img src="<?php echo $data['pic'] ?>"></td>
                 <td class="text"><textarea><?php echo $data['content'] ?></textarea></td>
         </tr>
