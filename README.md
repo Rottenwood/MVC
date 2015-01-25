@@ -1,9 +1,6 @@
-MVC
-===
-
-MVC test cms
-
-Работающая версия приложения: http://utopia.ml/aurora
+MVC CMS
+=======
+MVC test cms on native PHP
 
 (логин/пароль: test/test)
 
